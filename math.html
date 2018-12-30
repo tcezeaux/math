@@ -1,0 +1,87 @@
+<html>
+    <style>
+        body,div {
+            display:inline;
+            font-size:24pt;
+        }
+        center {
+            padding-top: 100px
+        }
+        input { font-size: 24pt; }
+    </style>
+    <script>
+        var num1, num2;
+        var ops = ["+","-","*","/"]
+        var op = "";
+        var count = 0;
+        var lock = false;
+        var timer = null;
+
+function init() {
+ op = ops[Math.round(Math.random()*3)];
+
+ num1 = Math.round(Math.random() * 10);
+ num2 = Math.round(Math.random() * 10);
+var tmp;
+ switch (op) {
+     case "-":
+       if (num2 > num1) {
+           tmp = num1;
+           num1 = num2;
+           num2 = tmp;
+       }
+       break;
+    case "/":
+       if (num2 == 0) num2 = 1;
+       tmp = num1*num2;
+       num1 = tmp; 
+       break;
+ }
+
+ document.getElementById("num1").innerHTML = num1;
+ document.getElementById("num2").innerHTML = num2;
+ document.getElementById("op").innerHTML = op;
+ document.getElementById("answer").innerHTML = "";
+ document.getElementById("result").value = ""; 
+
+ document.getElementById("result").focus();
+ lock = false;
+
+ timer = setTimeout(init,3000);
+}
+
+function handleKey(ev) {
+    if (ev.keyCode == 13 && !lock) {
+        clearTimeout(timer);
+        lock = true;
+        var val = document.getElementById("result").value;
+    var str = num1+op+num2;
+    var res = eval(str);
+    if ((val.length > 0) && (res == val)) {
+        document.getElementById("answer").innerHTML = "Correct";
+        count++;
+        document.getElementById("count").innerHTML = count;
+    } else {
+        document.getElementById("answer").innerHTML = "Wrong";
+    }
+
+    setTimeout(init,500);
+
+    }
+}
+
+function onBlur() {
+    document.getElementById("result").focus();
+}
+
+    </script>
+    <body onload="init()">
+        <center>
+        <div id="num1"></div>&nbsp;<div id="op"></div>&nbsp;<div id="num2"></div>&nbsp;=&nbsp;<input onblur="onBlur()" onkeydown="handleKey(event)" type="text" id="result" maxlength="3"/>
+        <br/>
+        <div id="answer"></div>
+        <br/><br/><br/>
+        Correct: <div id="count"></div>
+    </center>
+    </body>
+</html>

@@ -37,17 +37,17 @@ var tmp;
        num1 = tmp; 
        break;
  }
-
  document.getElementById("num1").innerHTML = num1;
  document.getElementById("num2").innerHTML = num2;
  document.getElementById("op").innerHTML = op;
  document.getElementById("answer").innerHTML = "";
  document.getElementById("result").value = ""; 
-
+ document.getElementById("count").innerHTML = count;
+ 
  document.getElementById("result").focus();
  lock = false;
-
- timer = setTimeout(init,3000);
+ if (timer) clearTimeout(timer); 
+ timer = setTimeout(init,5000);
 }
 
 function handleKey(ev) {
@@ -73,6 +73,14 @@ function handleKey(ev) {
 function onBlur() {
     document.getElementById("result").focus();
 }
+
+function handleVisibilityChange() {
+	 count = 0;
+	 init();
+}
+document.addEventListener("visibilitychange", handleVisibilityChange, false);
+	
+	
 
     </script>
     <body onload="init()">

@@ -138,8 +138,11 @@
                 }
             }
         });
-
+        // intially hide
+        $('.work').hide();
+        
         $('.start').click(function() {
+            $(".work").show();
             init();
         });
 
@@ -229,7 +232,7 @@
         <button type="button" class="btn btn-primary start">Start</button>
     </div>
 
-    <center>
+    <center class="work">
         <div id="num1"></div>&nbsp;<div id="op"></div>&nbsp;<div id="num2"></div>&nbsp;=&nbsp;<input onblur="onBlur()"
             onkeydown="handleKey(event)" type="text" id="result" maxlength="3" /> <br/><div id="answer"></div>
         

@@ -34,6 +34,7 @@
     var num1, num2;
     var ops = []
     var nums = [];
+    var seconds = [];
     var op = "";
     var count = 0;
     var wrong=0;
@@ -48,7 +49,18 @@
 
         numSize = nums.length-1;
         num1 = nums[Math.round(Math.random() * numSize)];
-        num2 = Math.round(Math.random() * 10);
+
+        // Feature: go through all digits before starting again
+        // if array is empty, load it with all digits 0-10
+        if (seconds.length == 0) {
+            for (var i=0; i < 11; i++) seconds.push(i);
+        }
+        var numSeconds = seconds.length-1;
+        var idxSeconds = Math.round(Math.random() * numSeconds)
+        num2 = seconds[idxSeconds];
+        // remove it from list
+        seconds.splice(idxSeconds,1);
+
         var tmp;
         switch (op) {
             case "-":

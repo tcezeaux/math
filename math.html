@@ -1,96 +1,245 @@
 <html>
-    <style>
-        body,div {
-            display:inline;
-            font-size:24pt;
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+    crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+    integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+    crossorigin="anonymous"></script>
+
+<style>
+    body,
+    div {
+        display: inline;
+        font-size: 24pt;
+    }
+
+    center {
+        padding-top: 100px
+    }
+
+    input {
+        font-size: 24pt;
+    }
+
+    .btn-group {
+        display: block;
+        margin-top: 15px;
+        margin-left: 50px;
+    }
+
+</style>
+<script>
+    var num1, num2;
+    var ops = []
+    var nums = [];
+    var op = "";
+    var count = 0;
+    var wrong=0;
+    var lock = false;
+    var timer = null;
+    var timeVal = 5;
+    var timeEnabled = false;
+
+    function init() {
+        var opSize = ops.length-1;
+        op = ops[Math.round(Math.random() * opSize)];
+
+        numSize = nums.length-1;
+        num1 = nums[Math.round(Math.random() * numSize)];
+        num2 = Math.round(Math.random() * 10);
+        var tmp;
+        switch (op) {
+            case "-":
+                if (num2 > num1) {
+                    tmp = num1;
+                    num1 = num2;
+                    num2 = tmp;
+                }
+                break;
+            case "/":
+                if (num2 == 0) num2 = 1;
+                tmp = num1 * num2;
+                num1 = tmp;
+                break;
         }
-        center {
-            padding-top: 100px
-        }
-        input { font-size: 24pt; }
-    </style>
-    <script>
-        var num1, num2;
-        var ops = ["+","-","*","/"]
-        var op = "";
-        var count = 0;
-        var lock = false;
-        var timer = null;
-
-function init() {
- op = ops[Math.round(Math.random()*3)];
-
- num1 = Math.round(Math.random() * 10);
- num2 = Math.round(Math.random() * 10);
-var tmp;
- switch (op) {
-     case "-":
-       if (num2 > num1) {
-           tmp = num1;
-           num1 = num2;
-           num2 = tmp;
-       }
-       break;
-    case "/":
-       if (num2 == 0) num2 = 1;
-       tmp = num1*num2;
-       num1 = tmp; 
-       break;
- }
- document.getElementById("num1").innerHTML = num1;
- document.getElementById("num2").innerHTML = num2;
- document.getElementById("op").innerHTML = op;
- document.getElementById("answer").innerHTML = "";
- document.getElementById("result").value = ""; 
- document.getElementById("count").innerHTML = count;
- 
- document.getElementById("result").focus();
- lock = false;
-
- if (timer) clearTimeout(timer); 
- timer = setTimeout(init,5000);
-}
-
-function handleKey(ev) {
-    if (ev.keyCode == 13 && !lock) {
-        clearTimeout(timer);
-        lock = true;
-        var val = document.getElementById("result").value;
-    var str = num1+op+num2;
-    var res = eval(str);
-    if ((val.length > 0) && (res == val)) {
-        document.getElementById("answer").innerHTML = "Correct";
-        count++;
+        document.getElementById("num1").innerHTML = num1;
+        document.getElementById("num2").innerHTML = num2;
+        document.getElementById("op").innerHTML = op;
+        document.getElementById("answer").innerHTML = "";
+        document.getElementById("result").value = "";
         document.getElementById("count").innerHTML = count;
-    } else {
-        document.getElementById("answer").innerHTML = "Wrong";
+        document.getElementById("wrong").innerHTML = wrong;
+
+
+        document.getElementById("result").focus();
+        lock = false;
+
+        if (timer) clearTimeout(timer);
+        if (timeEnabled) timer = setTimeout(handleAnswer, timeVal*1000);
     }
 
-    setTimeout(init,500);
+    function handleKey(ev) {
+        if (ev.keyCode == 13 && !lock) {
+            handleAnswer();
+        }
+    }
+
+    function handleAnswer() {
+        clearTimeout(timer);
+            lock = true;
+            var val = document.getElementById("result").value;
+            var str = num1 + op + num2;
+            var res = eval(str);
+            if ((val.length > 0) && (res == val)) {
+                document.getElementById("answer").innerHTML = "Correct";
+                count++;
+                document.getElementById("count").innerHTML = count;
+            } else {
+                document.getElementById("answer").innerHTML = "Wrong";
+                wrong++;
+                document.getElementById('wrong').innterHTML = wrong;
+            }
+            // display success.fail message
+            setTimeout(init, 1000);
+
 
     }
-}
 
-function onBlur() {
-    document.getElementById("result").focus();
-}
 
-function handleVisibilityChange() {
-	 count = 0;
-	 init();
-}
-document.addEventListener("visibilitychange", handleVisibilityChange, false);
-	
-	
+    $(document).ready(function () {
+        $('.op').change(function (el) {
+            var op = $(el.target).data('op');
+            if (el.target.checked) {
+                // add to list of ops
+                ops.push(op)
+            }
+            else {
+                // remove op from list
+                var index = ops.indexOf(op);
+                if (index !== -1) {
+                    ops.splice(index, 1);
+                }
+            }
+        });
 
-    </script>
-    <body onload="init()">
-        <center>
-        <div id="num1"></div>&nbsp;<div id="op"></div>&nbsp;<div id="num2"></div>&nbsp;=&nbsp;<input onblur="onBlur()" onkeydown="handleKey(event)" type="text" id="result" maxlength="3"/>
-        <br/>
-        <div id="answer"></div>
-        <br/><br/><br/>
-        Correct: <div id="count"></div>
+        $('.num').change(function (el) {
+            var num = $(el.target).data('num');
+            if (el.target.checked) {
+                // add to list of ops
+                nums.push(num)
+            }
+            else {
+                // remove op from list
+                var index = nums.indexOf(num);
+                if (index !== -1) {
+                    nums.splice(index, 1);
+                }
+            }
+        });
+
+        $('.start').click(function() {
+            init();
+        });
+
+        $('#timer').checked = timeEnabled;
+        (timeEnabled) ? $('.timerCtrl').show() : $('.timerCtrl').hide();
+
+        $('#timer').change(function(el) {
+            timeEnabled = el.target.checked;
+            (timeEnabled) ? $('.timerCtrl').show() : $('.timerCtrl').hide();
+        }) 
+    });
+
+    function onBlur() {
+        document.getElementById("result").focus();
+    }
+
+    function handleVisibilityChange() {
+        count = 0;
+        wrong = 0;
+        init();
+    }
+    document.addEventListener("visibilitychange", handleVisibilityChange, false);
+
+
+
+</script>
+
+<body>
+    <div class="btn-group" role="group">
+        Operations: &nbsp;
+        <input type="checkbox" class="btn-check op" data-op='+' id="addition" autocomplete="off">
+        <label class="btn btn-outline-primary" for="addition">+</label>
+
+        <input type="checkbox" class="btn-check op" data-op='-' id="subtraction" autocomplete="off">
+        <label class="btn btn-outline-primary" for="subtraction">-</label>
+
+        <input type="checkbox" class="btn-check op" data-op='*' id="multiplication" autocomplete="off">
+        <label class="btn btn-outline-primary" for="multiplication">*</label>
+
+        <input type="checkbox" class="btn-check op" data-op='/' id="division" autocomplete="off">
+        <label class="btn btn-outline-primary" for="division">/</label>
+
+    </div>
+
+    <div class="btn-group" role="group">
+        Numbers: &nbsp;
+        <input type="checkbox" class="btn-check num" data-num=2 id="two" autocomplete="off">
+        <label class="btn btn-outline-primary" for="two">2</label>
+
+        <input type="checkbox" class="btn-check num" data-num=3 id="three" autocomplete="off">
+        <label class="btn btn-outline-primary" for="three">3</label>
+
+        <input type="checkbox" class="btn-check num" data-num=4 id="four" autocomplete="off">
+        <label class="btn btn-outline-primary" for="four">4</label>
+
+        <input type="checkbox" class="btn-check num" data-num=5 id="five" autocomplete="off">
+        <label class="btn btn-outline-primary" for="five">5</label>
+
+        <input type="checkbox" class="btn-check num" data-num=6 id="six" autocomplete="off">
+        <label class="btn btn-outline-primary" for="six">6</label>
+
+        <input type="checkbox" class="btn-check num" data-num=7 id="seven" autocomplete="off">
+        <label class="btn btn-outline-primary" for="seven">7</label>
+
+        <input type="checkbox" class="btn-check num" data-num=8 id="eight" autocomplete="off">
+        <label class="btn btn-outline-primary" for="eight">8</label>
+
+        <input type="checkbox" class="btn-check num" data-num=9 id="nine" autocomplete="off">
+        <label class="btn btn-outline-primary" for="nine">9</label>
+
+        <input type="checkbox" class="btn-check num" data-num=10 id="ten" autocomplete="off">
+        <label class="btn btn-outline-primary" for="ten">10</label>
+
+        <input type="checkbox" class="btn-check num" data-num=11 id="eleven" autocomplete="off">
+        <label class="btn btn-outline-primary" for="eleven">11</label>
+
+        <input type="checkbox" class="btn-check num" data-num=12 id="twelve" autocomplete="off">
+        <label class="btn btn-outline-primary" for="twelve">12</label>
+    </div>
+    <div class="btn-group form-check form-switch" role="group">
+        <input class="form-check-input" type="checkbox" id="timer">
+        <label class="form-check-label" for="timer">Timer</label>
+        <input class="timerCtrl" type="number" value="5" id="time" min="1" max="10">
+        <span class="timerCtrl">sec</span>
+    </div>
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary start">Start</button>
+    </div>
+
+    <center>
+        <div id="num1"></div>&nbsp;<div id="op"></div>&nbsp;<div id="num2"></div>&nbsp;=&nbsp;<input onblur="onBlur()"
+            onkeydown="handleKey(event)" type="text" id="result" maxlength="3" /> <br/><div id="answer"></div>
+        
+        <br /><br />
+        <p>
+            Correct: <span id="count"></span>
+            &nbsp;&nbsp;
+            Wrong: <span id="wrong"></span>
+        </p>
     </center>
-    </body>
+</body>
+
 </html>
